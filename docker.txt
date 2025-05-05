@@ -1,0 +1,168 @@
+cmd to start the docker service.
+
+    systemctl start docker.service
+
+1. Create a file named as Dockerfile in a root directoty of current project.
+
+2. Run cmd to generate image:
+
+    docker build .
+    
+2.1 Cmd to generate image with customize name:
+	
+	docker build -t webapp:01 .
+
+3. cmd to see the current img id or status.
+    
+    docker image ls
+
+4. cmd to see the running container.
+
+    docker ps
+
+4.1 cmd to see all the containers (which are running or not):
+	
+	docker ps -a
+
+5. cmd to run a docker img (run an application inside a container.)
+
+    docker run <image id>
+
+5.1 cmd to bind the port (to access the app inside container):
+
+	docker run -p 3000:3000 <image id>
+
+5.2 If we want to delete the image:
+
+	docker rmi mywebapp:01 
+	
+5.3 If we want to delete all images:
+
+	docker rmi -f $(docker images -q)
+
+6. cmd to stop the container.
+    
+    docker stop <container names>
+
+7. If we want to run the conainer in detach mode.
+	
+	docker run -d -p 3000:3000 <image id>
+	
+	docker run -d -p 3001:3000 <image id>
+	
+8. If we want to delete the container when we stop the runnig container.
+	
+	docker run -d -rm -p 3000:3000 <image id>
+	
+8.1 If we want to delete the container:
+
+	. first we have to stop the container, if it's running, then will delete it.
+	docker rm <container id>
+
+8.2 If we want to stop all the container and delete in a single command:
+
+	# Here aq - provide the container ids, f - is used to forcely stop the container, $ - is used to call the command inside brackets.
+	docker rm -f $(docker ps -aq)
+	
+
+# Run container in interactive mode:
+
+9. when we want terminal should be there after container run. 
+	docker run -it <container id>
+	
+	
+# Push images in Docker hub:
+
+	10. Login with docker account.
+
+		docker login
+
+	11. Push image to docker:
+
+		docker push <image_name:tag>
+
+	12. Rename images(If we want to push older images):
+
+		docker tag <old_name:tag> <new_name:tag>
+
+# Docker Volumes:
+
+	13. docker run -it --rm -v <volume_name>:<workdir> <image_id>
+
+	14. to see the volumes:
+
+		docker volume ls
+
+	15. To see the detail of a particular volume:
+
+		docker volume inspect <volume_name>
+
+# What are Bind Mounts in Docker:
+
+	16. If we want to change some file and want to mount bind with container so that changes will reflect continously.
+	
+		docker run --rm -v /home/ritik/Documents/projects/python-projects/docker/testdocker/readfile/server.txt:/readfile/server.txt readfile:latest
+
+# Docker Ignore:
+
+	17. If we don't want to copy all files into our images.
+
+		. Create a .dockerignore file
+		. Inside write Dockerfile , .git , etc
+
+# Container with local db && # Communication with Multiple Containers:
+
+	18. when we want to connect our python programe to local db.
+		. Instead of localhost write host.docker.internal
+	
+	19. Also after taking pull of mysql or other image. when we run this image we can set env variables like password and database name.
+		. After that running command inspect the above image, inside network section we can get the ip of this container.
+			. So that we can write this ip instead of localhost.
+
+	. docker run -d --env MYSQL_ROOT_PASSWORD="root" --env MYSQL_DATABASE="user" --name mysqldb
+
+# Creating Docker Network:
+
+	Inside network we can run multiple containers.
+
+	20. Create docker network:
+
+		. docker network create my-net
+
+	21. Run mysql inside a network that is created above:
+
+		.docker run -d --env MYSQL_ROOT_PASSWORD="root" --env MYSQL_DATABASE="user" --name mysqldb --network my-net mysql
+	
+	. here when i run my python program (which makes connection to mysql and perform some crud query.)
+		. Inside host we just write the name of the conainer like: mysqldb, we didn't write the ip or localhost or anything.
+
+# Docker Compose:
+
+	. Configuration file (based on .yml) to manage multiple containers running on same machine.
+
+	. We can write all the configurations in a docker-compose.yml file (like postgres image).
+
+	22. Run the docker-compose.yml file:
+
+		docker-compose up
+
+	23. Stop the container which is run using above command.
+
+		docker-compose down
+
+	24. Run a particular service using docker-compose:
+
+		. docker-compose run <service_name>
+
+	25. When we down docker-compose, then network and volume are not removed.
+		. If we want to remove network and volume then: 
+
+		. docker-compose down -v
+
+	26. Some commands:
+
+		. -d (detach mode)
+		. -v (to remove networks/ volumes upon stop)
+		. --build (want again buid the image)
+
+	
