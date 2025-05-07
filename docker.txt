@@ -154,6 +154,10 @@ cmd to start the docker service.
 
 		. docker-compose run <service_name>
 
+	24.1 Run docker compose service in a interactive terminal:
+
+		. docker-compose run --rm -it db bash
+
 	25. When we down docker-compose, then network and volume are not removed.
 		. If we want to remove network and volume then: 
 
